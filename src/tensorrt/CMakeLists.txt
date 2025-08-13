@@ -15,13 +15,22 @@ target_include_directories(
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include/openrm>
 )
+#target_link_libraries(
+#    openrm_tensorrt
+#        PRIVATE
+#        nvinfer
+#        nvinfer_plugin
+#        nvonnxparser
+#        nvparsers
+#        cudart
+#        cublas
+#)
 target_link_libraries(
     openrm_tensorrt
         PRIVATE
         nvinfer
         nvinfer_plugin
         nvonnxparser
-        nvparsers
         cudart
         cublas
 )

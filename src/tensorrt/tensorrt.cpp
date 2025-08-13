@@ -56,35 +56,64 @@ bool rm::initTrtOnnx(
         }
 
         // 创建推理引擎
-        auto engine = infer_builder->buildEngineWithConfig(*network, *config);
-        if (!engine) {
-            throw std::runtime_error("Failed to build TensorRT engine.");
-        }
+        // auto engine = infer_builder->buildEngineWithConfig(*network, *config);
+        // if (!engine) {
+        //     throw std::runtime_error("Failed to build TensorRT engine.");
+        // }
 
         // 创建推理上下文
-        *context = engine->createExecutionContext();
-        if (!(*context)) {
-            throw std::runtime_error("Failed to create TensorRT execution context.");
-        }
+        // *context = engine->createExecutionContext();
+        // if (!(*context)) {
+        //     throw std::runtime_error("Failed to create TensorRT execution context.");
+        // }
 
         // 保存推理引擎到文件
-        std::ofstream file(engine_file, std::ios::binary);
-        if (!file) {
-            throw std::runtime_error("Failed to open engine file for writing.");
-        }
-        file.write(
-            reinterpret_cast<const char*>(engine->serialize()->data()),
-            engine->serialize()->size()
-        );
-        file.close();
+        // std::ofstream file(engine_file, std::ios::binary);
+        // if (!file) {
+        //     throw std::runtime_error("Failed to open engine file for writing.");
+        // }
+        // file.write(
+        //     reinterpret_cast<const char*>(engine->serialize()->data()),
+        //     engine->serialize()->size()
+        // );
+        // file.close();
 
         // 释放资源
-        parser->destroy();
-        network->destroy();
-        infer_builder->destroy();
-        config->destroy();
-        engine->destroy();
+        // parser->destroy();
+        // network->destroy();
+        // infer_builder->destroy();
+        // config->destroy();
+        // engine->destroy();
 
+        // 使用 buildSerializedNetwork 替代 buildEngineWithConfig
+        IHostMemory* serialized_engine = infer_builder->buildSerializedNetwork(*network, *config);
+        if (!serialized_engine) throw std::runtime_error("Failed to build serialized engine.");
+
+        // 保存引擎文件
+        std::ofstream file(engine_file, std::ios::binary);
+        if (!file) throw std::runtime_error("Failed to open engine file for writing.");
+        file.write(reinterpret_cast<const char*>(serialized_engine->data()), serialized_engine->size());
+        file.close();
+
+        // 创建运行时并反序列化引擎
+        auto runtime = createInferRuntime(logger);
+        if (!runtime) throw std::runtime_error("Failed to create runtime.");
+        
+        auto engine = runtime->deserializeCudaEngine(serialized_engine->data(), serialized_engine->size());
+        if (!engine) throw std::runtime_error("Failed to deserialize engine.");
+
+        // 创建执行上下文
+        *context = engine->createExecutionContext();
+        if (!(*context)) throw std::runtime_error("Failed to create execution context.");
+
+        // 释放资源（使用 delete 替代 destroy）
+        delete parser;    // 替代 parser->destroy()
+        delete network;   // 替代 network->destroy()
+        delete infer_builder; // 替代 infer_builder->destroy()
+        delete config;    // 替代 config->destroy()
+        delete serialized_engine; // IHostMemory 仍需 destroy
+        
+        // 注意：engine 和 runtime 由执行上下文管理，不能在此销毁
         rm::message("TensorRT ONNX model parsed and engine built", rm::MSG_OK);
         return true; 
 
@@ -92,8 +121,13 @@ bool rm::initTrtOnnx(
         std::string error_message = e.what();
         rm::message("TensoRT ONNX : " + error_message, rm::MSG_ERROR);
 
+        // if (*context) {
+        //     (*context)->destroy();
+        // }
+
         if (*context) {
-            (*context)->destroy();
+            delete *context;  // 替代 destroy()
+            *context = nullptr;
         }
 
         return false;
@@ -133,27 +167,44 @@ bool rm::initTrtEngine(
         }
 
         // 反序列化引擎
-        auto engine = runtime->deserializeCudaEngine(serialized_engine, size, nullptr);
-        if (!engine) {
-            throw std::runtime_error("Failed to deserialize TensorRT engine.");
-        }
+        // auto engine = runtime->deserializeCudaEngine(serialized_engine, size, nullptr);
+        // if (!engine) {
+        //     throw std::runtime_error("Failed to deserialize TensorRT engine.");
+        // }
 
         // 创建推理上下文
-        *context = engine->createExecutionContext();
-        if (!(*context)) {
-            throw std::runtime_error("Failed to create TensorRT execution context.");
-        }
+        // *context = engine->createExecutionContext();
+        // if (!(*context)) {
+        //     throw std::runtime_error("Failed to create TensorRT execution context.");
+        // }
 
         // 释放资源
+        // delete[] serialized_engine;
+
+        // 移除 nullptr 参数
+        auto engine = runtime->deserializeCudaEngine(serialized_engine, size);
         delete[] serialized_engine;
+        
+        if (!engine) throw std::runtime_error("Failed to deserialize engine.");
+
+        *context = engine->createExecutionContext();
+        if (!(*context)) throw std::runtime_error("Failed to create execution context.");
+
+        // runtime 可安全销毁（引擎已加载）
+        delete runtime;
+
         rm::message("TensorRT Engine OK", rm::MSG_OK);
         return true;
 
     } catch (const std::exception& e) {
         std::string error_message = e.what();
         rm::message("TensoRT Engine : " + error_message, rm::MSG_ERROR);
+        // if (*context) {
+        //     (*context)->destroy();
+        // }
         if (*context) {
-            (*context)->destroy();
+            delete *context;  // 替代 destroy()
+            *context = nullptr;
         }
         return false;
     }
@@ -176,16 +227,59 @@ bool rm::initCudaStream(
     }
 }
 
+// void rm::detectEnqueue(
+//     float* input_device_buffer,
+//     float* output_device_buffer,
+//     nvinfer1::IExecutionContext** context,
+//     cudaStream_t* stream
+// ) {
+//     float* device_buffer[2];
+//     device_buffer[0] = input_device_buffer;
+//     device_buffer[1] = output_device_buffer;
+//     (*context)->enqueueV2((void**)device_buffer, *stream, nullptr);
+// }
+
 void rm::detectEnqueue(
     float* input_device_buffer,
     float* output_device_buffer,
     nvinfer1::IExecutionContext** context,
     cudaStream_t* stream
 ) {
-    float* device_buffer[2];
-    device_buffer[0] = input_device_buffer;
-    device_buffer[1] = output_device_buffer;
-    (*context)->enqueueV2((void**)device_buffer, *stream, nullptr);
+    if (!context || !*context) {
+        rm::message("Invalid TensorRT context", rm::MSG_ERROR);
+        return;
+    }
+    
+    try {
+        // 获取引擎引用
+        auto& engine = (*context)->getEngine();
+        
+        // 获取输入和输出绑定的名称
+        char const* input_name = "input";
+        char const* output_name = "output";
+        
+        if (!input_name || !output_name) {
+            throw std::runtime_error("Failed to get binding names");
+        }
+        
+        // 设置输入输出张量的地址
+        if (!(*context)->setTensorAddress(input_name, input_device_buffer)) {
+            throw std::runtime_error("Failed to set input tensor address");
+        }
+        
+        if (!(*context)->setTensorAddress(output_name, output_device_buffer)) {
+            throw std::runtime_error("Failed to set output tensor address");
+        }
+        
+        // 执行推理
+        if (!(*context)->enqueueV3(*stream)) {
+            throw std::runtime_error("Failed to enqueue inference");
+        }
+        
+    } catch (const std::exception& e) {
+        std::string error_message = e.what();
+        rm::message("Detect Enqueue: " + error_message, rm::MSG_ERROR);
+    }
 }
 
 void rm::detectOutput(
