@@ -19,7 +19,7 @@ void Control::send_single(double yaw, double pitch, bool fire, rm::ArmorID id) {
     operate_bytes_.output_data.shoot_pitch = static_cast<float>(pitch);
     operate_bytes_.output_data.fire = fire;
 
-    #if defined(TJURM_INFANTRY)
+    #if defined(DPAUTOAIM_INFANTRY)
     operate_bytes_.output_data.target_id = static_cast<uint8_t>(id);
     #endif
 

@@ -12,7 +12,7 @@ struct FrameTailer {
 } __attribute__((packed));
 
 
-#ifdef TJURM_INFANTRY
+#ifdef DPAUTOAIM_INFANTRY
 struct InputData {
     float       curr_yaw;
     float       curr_pitch;
@@ -30,7 +30,7 @@ struct OutputData {
 } __attribute__((packed));
 #endif
 
-#ifdef TJURM_BALANCE
+#ifdef DPAUTOAIM_BALANCE
 struct InputData {
     float       curr_yaw;
     float       curr_pitch;
@@ -46,7 +46,7 @@ struct OutputData {
 } __attribute__((packed));
 #endif
 
-#ifdef TJURM_HERO
+#ifdef DPAUTOAIM_HERO
 struct InputData {
     float       curr_yaw;
     float       curr_pitch;
@@ -66,7 +66,7 @@ struct OutputData {
 #endif
 
 
-#ifdef TJURM_DRONSE
+#ifdef DPAUTOAIM_DRONSE
 struct InputData {
     float       curr_yaw;
     float       curr_pitch;
@@ -85,7 +85,7 @@ struct OutputData {
 
 
 
-#ifdef TJURM_SENTRY
+#ifdef DPAUTOAIM_SENTRY
 struct InputData {
     uint64_t    config;
     float       target_pose[3];

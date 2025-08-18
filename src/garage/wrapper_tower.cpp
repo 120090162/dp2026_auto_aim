@@ -31,12 +31,12 @@ WrapperTower::WrapperTower(ArmorID id) : ObjInterface(id) {
         trackqueueQ[6], trackqueueQ[7], trackqueueQ[8], trackqueueQ[9], trackqueueQ[10]);
     track_queue_.setMatrixR(trackqueueR[0], trackqueueR[1], trackqueueR[2], trackqueueR[3]);
     
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO) || defined(TJURM_SENTRY)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO) || defined(DPAUTOAIM_SENTRY)
     outpost_ = OutpostV1();
     outpost_.setMatrixQ(outpostQ[0], outpostQ[1], outpostQ[2], outpostQ[3], outpostQ[4]);
     #endif    
 
-    #if defined(TJURM_DRONSE)
+    #if defined(DPAUTOAIM_DRONSE)
     outpost_ = OutpostV2();
     outpost_.setMatrixQ(outpostQ[0], outpostQ[1], outpostQ[2], outpostQ[3], outpostQ[4], outpostQ[5], outpostQ[6], outpostQ[7]);
     #endif
@@ -73,7 +73,7 @@ bool WrapperTower::getTarget(Eigen::Vector4d& pose_rotate, const double fly_dela
     Data::target_omega = outpost_.getOmega();
     rm::message("target omg", Data::target_omega);
 
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE)
     if (Data::state == 0) {
         rm::message("mode", 'T');
         return track_queue_.getFireFlag();
@@ -85,14 +85,14 @@ bool WrapperTower::getTarget(Eigen::Vector4d& pose_rotate, const double fly_dela
     }
     #endif
 
-    #if defined(TJURM_DRONSE) || defined(TJURM_SENTRY)
+    #if defined(DPAUTOAIM_DRONSE) || defined(DPAUTOAIM_SENTRY)
     rm::message("mode", 'A');
     pose_shoot = outpost_.getPose(fly_delay + shoot_delay);
     pose_rotate = outpost_.getPose(fly_delay + rotate_delay);
     return outpost_.getFireArmor(pose_shoot);
     #endif
 
-    #ifdef TJURM_HERO
+    #ifdef DPAUTOAIM_HERO
     if (Data::state == 1) {
         rm::message("mode", 'C');
         pose_shoot = outpost_.getCenter(fly_delay + shoot_delay);

@@ -105,7 +105,7 @@ bool Pipeline::pointer(std::shared_ptr<rm::Frame> frame) {
         setArmorRectCenter(armor);
 
 
-        #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO)
+        #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO)
         if ((Data::state == 1) && (armor.id != rm::ARMOR_ID_TOWER)) continue;
         #endif
 
@@ -175,12 +175,12 @@ bool Pipeline::pointer(std::shared_ptr<rm::Frame> frame) {
 
         bool color_skip_flag = false;
         
-        #ifdef TJURM_SENTRY
+        #ifdef DPAUTOAIM_SENTRY
         color_skip_flag = color_skip_flag || !rm::isArmorColorEnemy(roi, best_pair, Data::enemy_color, enemy_split);
         color_skip_flag = color_skip_flag || (armor.color != Data::enemy_color);
         #endif
         
-        #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO) || defined(TJURM_DRONSE)
+        #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO) || defined(DPAUTOAIM_DRONSE)
         color_skip_flag = color_skip_flag || (armor.color == Data::self_color);
         color_skip_flag = color_skip_flag || (armor.color == rm::ARMOR_COLOR_NONE);
         #endif
@@ -219,12 +219,12 @@ bool Pipeline::pointer(std::shared_ptr<rm::Frame> frame) {
             continue;
         }
 
-        #if defined(TJURM_SENTRY) || defined(TJURM_DRONSE)
+        #if defined(DPAUTOAIM_SENTRY) || defined(DPAUTOAIM_DRONSE)
         if (armor.id == rm::ARMOR_ID_TOWER) setArmorSizeByPoints(armor, armor_tower_size_ratio);
         else setArmorSizeByPoints(armor, armor_size_ratio);
         #endif
 
-        #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO)
+        #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO)
         setArmorSizeByPoints(armor, armor_size_ratio);
         #endif
 

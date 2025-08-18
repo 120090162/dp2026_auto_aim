@@ -1,7 +1,7 @@
 #include "threads/pipeline.h"
 #include <unistd.h>
 #include <iostream>
-#include <openrm/cudatools.h>
+#include <dprm/cudatools.h>
 
 using namespace rm;
 using namespace nvinfer1;

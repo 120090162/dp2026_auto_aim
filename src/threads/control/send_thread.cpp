@@ -90,7 +90,7 @@ void Control::state() {
     Data::state = get_state();
     // Data::state = 2;
 
-    #ifdef TJURM_SENTRY
+    #ifdef DPAUTOAIM_SENTRY
     if (Data::target_id != rm::ARMOR_ID_TOWER) {
         Data::camera_index = Data::camera_base;
         rm::message("camera type", 'B');
@@ -103,13 +103,13 @@ void Control::state() {
     }
     #endif
 
-    #ifdef TJURM_SENTRY
+    #ifdef DPAUTOAIM_SENTRY
     rm::message("shoot config", (int)get_shoot_config());
     Data::attack->setValidID(get_shoot_config());
     #endif
 
     // 更新自瞄状态
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE)
     if (Data::auto_rune) {
         if (Data::state == 0 || Data::state == 1) pipeline->switch_rune_to_armor();
         else if (Data::state == 2 || Data::state == 3) pipeline->switch_armor_to_rune();
@@ -121,7 +121,7 @@ void Control::state() {
     }
     #endif
 
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE)
     if (Data::rune_mode)       rotate_delay = rotate_delay_rune;
     else if (Data::state == 1) rotate_delay = rotate_delay_outpost;
     else                       rotate_delay = rotate_delay;
@@ -130,7 +130,7 @@ void Control::state() {
 
 void Control::shootspeed() {
     
-    #ifdef TJURM_HERO
+    #ifdef DPAUTOAIM_HERO
     
     float curr_speed = this->state_bytes_.input_data.curr_speed;
     float last_speed = speed_queue.back();
@@ -174,16 +174,16 @@ void Control::send_thread() {
 
         // 根据目标id判断是否需要自瞄
         if(Data::target_id == rm::ARMOR_ID_UNKNOWN) {
-            #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_DRONSE)
+            #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_DRONSE)
             continue;
             #endif
 
-            #ifdef TJURM_HERO
+            #ifdef DPAUTOAIM_HERO
             send_single(get_yaw(), get_pitch(), false);
             continue;
             #endif
 
-            #ifdef TJURM_SENTRY
+            #ifdef DPAUTOAIM_SENTRY
             float camsense_x = this->state_bytes_.input_data.target_pose[0];
             float camsense_y = this->state_bytes_.input_data.target_pose[1];
             float camsense_z = this->state_bytes_.input_data.target_pose[2];
@@ -208,16 +208,16 @@ void Control::send_thread() {
         
         // 如果返回坐标为0, 确定控制信号
         if ((std::abs(pose[0]) < 1e-2) && (std::abs(pose[1]) < 1e-2)) {
-            #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_DRONSE)
+            #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_DRONSE)
             continue;
             #endif
 
-            #ifdef TJURM_HERO
+            #ifdef DPAUTOAIM_HERO
             send_single(get_yaw(), get_pitch(), false);
             continue;
             #endif
 
-            #ifdef TJURM_SENTRY
+            #ifdef DPAUTOAIM_SENTRY
             float camsense_x = this->state_bytes_.input_data.target_pose[0];
             float camsense_y = this->state_bytes_.input_data.target_pose[1];
             float camsense_z = this->state_bytes_.input_data.target_pose[2];

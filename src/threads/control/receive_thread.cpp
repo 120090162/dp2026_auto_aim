@@ -84,7 +84,7 @@ void Control::receive_thread() {
         Data::pitch = get_pitch();
         Data::roll  = get_roll();
 
-        #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE)
+        #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE)
         Data::yaw_omega = get_yaw_omega();
         #endif
 

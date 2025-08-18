@@ -41,11 +41,11 @@ int main(int argc, char** argv) {
     if (Data::serial_flag) init_serial();
     control->autoaim();
 
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE)
     pipeline->autoaim_combine();  
     #endif
 
-    #if defined(TJURM_SENTRY) || defined(TJURM_DRONSE) || defined(TJURM_HERO)
+    #if defined(DPAUTOAIM_SENTRY) || defined(DPAUTOAIM_DRONSE) || defined(DPAUTOAIM_HERO)
     pipeline->autoaim_baseline();
     #endif
 

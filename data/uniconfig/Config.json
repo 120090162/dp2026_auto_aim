@@ -40,11 +40,11 @@
         },
         "SaveSpeed" : {
             "SpeedWrite" : true,
-            "SavePath" : "/etc/openrm/speed_log.txt"
+            "SavePath" : "/etc/dprm/speed_log.txt"
         },
 
-        "BigDecal" : "/etc/openrm/image/armor1.png",
-        "SmallDecal" : "/etc/openrm/image/armor3.png"
+        "BigDecal" : "/etc/dprm/image/armor1.png",
+        "SmallDecal" : "/etc/dprm/image/armor3.png"
     },
 
     "Car" : {
@@ -72,7 +72,7 @@
     },
 
     "Camera" : {
-        "CamLensDir" : "/etc/openrm/CamLens.json",
+        "CamLensDir" : "/etc/dprm/CamLens.json",
         "VideoSaveDir" : "/home/nvidia/Code/TJURM-Aiming/data/video",
         "DebugSaveDir" : "/home/nvidia/Code/TJURM-Aiming/data/debug",
         "Base" : {
@@ -103,8 +103,8 @@
             "TypeDefine" : ["V5", "FP", "FPX"],
             "Type" : "V5",
             "V5" : {
-                "DirONNX" : "/etc/openrm/models/v5n.onnx",
-                "DirEngine" : "/etc/openrm/models/v5n.engine",
+                "DirONNX" : "/etc/dprm/models/v5n.onnx",
+                "DirEngine" : "/etc/dprm/models/v5n.engine",
                 "InferWidth" : 640,
                 "InferHeight" : 480,
                 "LocateNum" : 4,
@@ -118,8 +118,8 @@
                 "ColorMap" : [0, 1, 2, 3]
             },
             "FPX" : {
-                "DirONNX" : "/etc/openrm/models/RP24.onnx",
-                "DirEngine" : "/etc/openrm/models/RP24.engine",
+                "DirONNX" : "/etc/dprm/models/RP24.onnx",
+                "DirEngine" : "/etc/dprm/models/RP24.engine",
                 "InferWidth" : 640,
                 "InferHeight" : 640,
                 "LocateNum" : 8,
@@ -134,8 +134,8 @@
             }
         },
         "YoloRune" : {
-            "DirONNX" : "/etc/openrm/models/rune.onnx",
-            "DirEngine" : "/etc/openrm/models/rune.engine",
+            "DirONNX" : "/etc/dprm/models/rune.onnx",
+            "DirEngine" : "/etc/dprm/models/rune.engine",
             "InferWidth" : 640,
             "InferHeight" : 512,
             "ClassNum" : 2,

@@ -10,6 +10,8 @@
 #include "threads/control.h"
 #include "garage/garage.h"
 
+using namespace rm;
+
 void init_debug() {
     auto param = Param::get_instance();
     Data::auto_fire = (*param)["Debug"]["System"]["AutoFire"];
@@ -62,7 +64,8 @@ bool init_camera() {
 
     // 获取相机数量
     int camera_num;
-    bool flag_camera = rm::getDaHengCameraNum(camera_num);
+    bool flag_camera = getHikCameraNum(camera_num);
+    // bool flag_camera = getDaHengCameraNum(camera_num);
     Data::camera.clear();
     Data::camera.resize(camera_num + 1, nullptr);
     if(!flag_camera) {
@@ -84,9 +87,12 @@ bool init_camera() {
         std::vector<double> camera_offset = (*param)["Car"]["CameraOffset"]["Base"];
 
         Data::camera[1] = new rm::Camera();
-        flag_camera = rm::openDaHeng(
+        flag_camera = openHik(
             Data::camera[1], 1, &Data::yaw, &Data::pitch, &Data::roll,
-            false, exp, gain, rate);
+            exp, gain, rate);
+        // flag_camera = rm::openDaHeng(
+        //     Data::camera[1], 1, &Data::yaw, &Data::pitch, &Data::roll,
+        //     false, exp, gain, rate);
 
         if(!flag_camera) {
             rm::message("Failed to open camera", rm::MSG_ERROR);
@@ -126,7 +132,8 @@ bool init_camera() {
         for(int i = 1; i <= camera_num; i++) {
             rm::message("begin open camera "+ std::to_string(i), rm::MSG_NOTE);
             Data::camera[i] = new rm::Camera();
-            flag_camera = rm::openDaHeng(Data::camera[i], i, &Data::yaw, &Data::pitch, &Data::roll);
+            flag_camera = openHik(Data::camera[i], i, &Data::yaw, &Data::pitch, &Data::roll);
+            // flag_camera = rm::openDaHeng(Data::camera[i], i, &Data::yaw, &Data::pitch, &Data::roll);
 
             if(!flag_camera) {
                 rm::message("Failed to open camera: " + std::to_string(i), rm::MSG_ERROR);
@@ -136,7 +143,8 @@ bool init_camera() {
             if (Data::camera[i]->width == width_base) {
                 Data::camera_base = i;
                 Data::camera_index = i;
-                flag_camera = setDaHengArgs(Data::camera[i], exp_base, gain_base, rate_base);
+                flag_camera = setHikArgs(Data::camera[i], gain_base, rate_base, exp_base);
+                // flag_camera = setDaHengArgs(Data::camera[i], exp_base, gain_base, rate_base);
                 if(!flag_camera) {
                     rm::message("Failed to set camera args: " + std::to_string(i), rm::MSG_ERROR);
                     return false;
@@ -150,7 +158,8 @@ bool init_camera() {
 
             } else if (Data::camera[i]->width == width_far) {
                 Data::camera_far = i;
-                flag_camera = setDaHengArgs(Data::camera[i], exp_far, gain_far, rate_far);
+                flag_camera = setHikArgs(Data::camera[i], gain_far, rate_far, exp_far);
+                // flag_camera = setDaHengArgs(Data::camera[i], exp_far, gain_far, rate_far);
                 if(!flag_camera) {
                     rm::message("Failed to set camera args: " + std::to_string(i), rm::MSG_ERROR);
                     return false;
@@ -201,11 +210,11 @@ void init_serial() {
 
     while(true) {
 
-        #if defined(TJURM_HERO)
+        #if defined(DPAUTOAIM_HERO)
         status = (int)rm::getSerialPortList(port_list, rm::SERIAL_TYPE_TTY_ACM);
         #endif
 
-        #if defined(TJURM_BALANCE) || defined(TJURM_INFANTRY) || defined(TJURM_DRONSE) || defined(TJURM_SENTRY)
+        #if defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_DRONSE) || defined(DPAUTOAIM_SENTRY)
         status = (int)rm::getSerialPortList(port_list, rm::SERIAL_TYPE_TTY_USB);
         #endif
 
@@ -232,11 +241,11 @@ void init_serial() {
 
 
 void init_attack() {
-    #ifdef TJURM_SENTRY
+    #ifdef DPAUTOAIM_SENTRY
     Data::attack = new rm::Filtrate();
     #endif
 
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO) || defined(TJURM_DRONSE)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO) || defined(DPAUTOAIM_DRONSE)
     Data::attack = new rm::DeadLocker();
     #endif 
 }

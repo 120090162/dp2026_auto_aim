@@ -18,11 +18,11 @@ public:
 public:
     rm::TrackQueueV3 track_queue_;
 
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO) || defined(TJURM_SENTRY)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO) || defined(DPAUTOAIM_SENTRY)
     rm::OutpostV1 outpost_;
     #endif
 
-    #if defined(TJURM_DRONSE)
+    #if defined(DPAUTOAIM_DRONSE)
     rm::OutpostV2 outpost_;
     #endif
 

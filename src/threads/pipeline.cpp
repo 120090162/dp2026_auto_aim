@@ -165,7 +165,7 @@ void Pipeline::autoaim_combine() {
     tracker_baseline_thread.detach();
     recording_thread.detach();
 
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE)
     if (Data::auto_rune || Data::manu_rune) {
         std::thread preprocessor_rune_thread(
         &Pipeline::preprocessor_rune_thread, this,

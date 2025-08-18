@@ -23,10 +23,10 @@ public:
         return static_cast<double>(this->state_bytes_.input_data.curr_pitch);
     }
     double get_roll() {
-        #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO) || defined(TJURM_SENTRY)
+        #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO) || defined(DPAUTOAIM_SENTRY)
         return 0.0;
         #endif
-        #ifdef TJURM_DRONSE
+        #ifdef DPAUTOAIM_DRONSE
         return static_cast<double>(this->state_bytes_.input_data.curr_roll);
         #endif
     }
@@ -34,14 +34,14 @@ public:
         return static_cast<rm::ArmorColor>(this->state_bytes_.input_data.enemy_color);
     }
     uint8_t get_state() {
-        #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO) || defined(TJURM_DRONSE)
+        #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO) || defined(DPAUTOAIM_DRONSE)
         return static_cast<uint8_t>(this->state_bytes_.input_data.state);
         #endif
 
         return 0x00;
     }
     double get_yaw_omega() {
-        #if defined(TJURM_INFANTRY)
+        #if defined(DPAUTOAIM_INFANTRY)
         return static_cast<double>(this->state_bytes_.input_data.curr_omega);
         #endif
         return 0.0;
@@ -54,18 +54,18 @@ public:
     }
 
     char get_shoot_config() {
-        #ifdef TJURM_SENTRY
+        #ifdef DPAUTOAIM_SENTRY
         return static_cast<char>(this->state_bytes_.input_data.shoot_config);
         #endif
         return 0xFF;
     }
 
     bool get_autoaim() {
-        #ifdef TJURM_SENTRY
+        #ifdef DPAUTOAIM_SENTRY
         return true;
         #endif
 
-        #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE) || defined(TJURM_HERO) || defined(TJURM_DRONSE)
+        #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE) || defined(DPAUTOAIM_HERO) || defined(DPAUTOAIM_DRONSE)
         return static_cast<bool>(this->state_bytes_.input_data.autoaim);
         #endif
     }
@@ -89,11 +89,11 @@ public:
 private:
     Control() {
         
-        #ifdef TJURM_HERO
+        #ifdef DPAUTOAIM_HERO
         this->state_bytes_.input_data.curr_speed = 15.8f;
         #endif
 
-        #ifdef TJURM_SENTRY
+        #ifdef DPAUTOAIM_SENTRY
         this->state_bytes_.input_data.shoot_config = 0xFF;
         #endif
     }

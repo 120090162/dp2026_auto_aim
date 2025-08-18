@@ -10,6 +10,6 @@ add_library(garage
 
 target_link_libraries(garage
     PUBLIC
-        ${OpenRM_LIBS}
+        ${DPRM_LIBS}
         data_manager
 )

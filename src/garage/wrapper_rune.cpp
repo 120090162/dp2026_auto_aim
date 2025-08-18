@@ -39,7 +39,7 @@ void WrapperRune::push(const Target& target, TimePoint t) {
 }
 
 bool WrapperRune::getTarget(Eigen::Vector4d& pose, const double fly_delay, const double rotate_delay, const double shoot_delay) {
-    #if defined(TJURM_INFANTRY) || defined(TJURM_BALANCE)
+    #if defined(DPAUTOAIM_INFANTRY) || defined(DPAUTOAIM_BALANCE)
     auto pipeline = Pipeline::get_instance();
     
     if (Data::auto_rune) {

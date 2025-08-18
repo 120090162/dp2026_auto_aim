@@ -23,14 +23,14 @@ if [ ! -d "data/speed" ]; then
     touch data/speed/here_save_shoot_speed
 fi
 
-if [ ! -d "/etc/openrm" ]; then 
-    mkdir /etc/openrm
-    sudo cp -r data/uniconfig/* /etc/openrm/
-    sudo chmod -R 777 /etc/openrm
+if [ ! -d "/etc/dprm" ]; then 
+    mkdir /etc/dprm
+    sudo cp -r data/uniconfig/* /etc/dprm/
+    sudo chmod -R 777 /etc/dprm
 fi
-
+# 软链接
 if [ ! -d "config" ]; then 
-    ln -s /etc/openrm ./config
+    ln -s /etc/dprm ./config
 fi
 
 
@@ -40,7 +40,7 @@ fi
 
 imshow=0
 
-while getopts ":rcg:ls" opt; do
+while getopts ":rcg:s" opt; do
     case $opt in
         r)
             echo -e "${yellow}<--- delete 'build' --->\n${reset}"
@@ -50,8 +50,8 @@ while getopts ":rcg:ls" opt; do
             ;;
 
         c)
-            sudo cp -r data/uniconfig/* /etc/openrm/
-            sudo chmod -R 777 /etc/openrm
+            sudo cp -r data/uniconfig/* /etc/dprm/
+            sudo chmod -R 777 /etc/dprm
             exit 0
             shift
             ;;
@@ -62,14 +62,6 @@ while getopts ":rcg:ls" opt; do
             git add -A
             git commit -m "$git_message"
             git push
-            exit 0
-            shift
-            ;;
-
-        l)
-            cd ../OpenRM
-            sudo ./run.sh
-            cd ../TJURM-2024
             exit 0
             shift
             ;;
@@ -91,7 +83,7 @@ echo -e "${yellow}<--- Start CMake --->${reset}"
 cd build
 cmake ..
 
-
+# 获取CPU核心数并行编译
 echo -e "${yellow}\n<--- Start Make --->${reset}"
 max_threads=$(cat /proc/cpuinfo | grep "processor" | wc -l)
 make -j "$max_threads"
@@ -102,18 +94,18 @@ echo -e "${blue}        $total${reset}"
 
 
 echo -e "${yellow}\n<--- Run Code --->${reset}"
-sudo rm /usr/local/bin/TJURM-2024
-sudo cp TJURM-2024 /usr/local/bin/
-sudo pkill TJURM-2024
-sudo chmod 777 /dev/tty*
+sudo rm /usr/local/bin/DPAUTOAIM-RM2026
+sudo cp DPAUTOAIM-RM2026 /usr/local/bin/
+sudo pkill DPAUTOAIM-RM2026
+# sudo chmod 777 /dev/tty*
 
-if [ $imshow = 1 ]; then
-    TJURM-2024 -s
-else
-    TJURM-2024
+# if [ $imshow = 1 ]; then
+#     DPAUTOAIM-RM2026 -s
+# else
+#     DPAUTOAIM-RM2026
 
-fi
+# fi
 
-/etc/openrm/guard.sh
+# /etc/dprm/guard.sh
 
 echo -e "${yellow}<----- OVER ----->${reset}"

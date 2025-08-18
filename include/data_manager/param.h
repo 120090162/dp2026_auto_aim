@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 #include <fstream>
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 
 class Param {
 public:
@@ -30,7 +30,7 @@ private:
 
 private:
     nlohmann::json params_;
-    std::string default_path_ = "/etc/openrm/Config.json";
+    std::string default_path_ = "/etc/dprm/Config.json";
 
 
 };
